@@ -48,8 +48,8 @@ registerPatcher({
     defaultSettings: {
       patchFileName: 'zPatch.esp',
       femaleLists: [
-        'DLC03_LCharWorkshopNPC',
-        'DLC06_LCharWorkshopNPC',
+        'DLC03LCharWorkshopNPC',
+        'DLC06LCharWorkshopNPC',
         'JtB_SSAO_SimTowers_Room1Guests',
         'JtB_SSAO_SimTowers_Room2Guests',
         'JtB_SSAO_SimTowers_Room3Guests',
