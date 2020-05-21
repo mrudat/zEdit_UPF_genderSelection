@@ -11,21 +11,32 @@
   </div>
 
   <div>
-    <span class="input-label" title="A list of LVLN(Levelled NPC)s and FLST(FormID List)s to make female-only">Female-only NPCs lists</span>
-    <button class="action-btn small positive" ng-click="addFemale()">Add</button>
-    <div ng-repeat="listName in femaleLists">
-      <input type="text" ng-model="listName" size="{{min(listName.length,70)}}"/>
-      <span class="remove-item" ng-click="removeFemale($index)" title="Remove"></span>
-    </div>
-  </div>
-
-  <div>
-    <span class="input-label" title="A list of LVLN(Levelled NPC)s and FLST(FormID List)s to make male-only">Male-only NPCs lists</span>
-    <button class="action-btn small positive" ng-click="addMale()">Add</button>
-    <div ng-repeat="listName in maleLists">
-      <input type="text" ng-model="listName" size="{{min(listName.length,70)}}"/>
-      <span class="remove-item" ng-click="removeMale($index)" title="Remove"></span>
-    </div>
+    <p>A List of Levelled NPC (LVLN) or Form ID List (FLST) records, identified by Editor ID, that you want to remove NPCs from based on gender (M/F) or not (N), or if they happen to be a ghoul (G).</p>
+    <table>
+      <thead style="text-align: center; vertical-align: middle">
+        <tr>
+          <th rowspan="2">EditorID</th>
+          <th colspan="4">Remove</th>
+          <th rowspan="2"><button class="action-btn small positive" ng-click="addEntry()">Add</button></th>
+        </tr>
+        <tr>
+          <th title="Males">M</th>
+          <th title="Females">F</th>
+          <th title="Neither males nor females">N</th>
+          <th title="Ghouls">G</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="(listName, listData) in lists">
+          <td><input type="text" ng-model="listName" style="width: 30em"/></td>
+          <td style="text-align: center"><input type="radio" ng-model="listData.genderAction" value="1"/></td>
+          <td style="text-align: center"><input type="radio" ng-model="listData.genderAction" value="2"/></td>
+          <td style="text-align: center"><input type="radio" ng-model="listData.genderAction" value="0"/></td>
+          <td style="text-align: center"><input type="checkbox" ng-model="listData.removeGhouls"/></td>
+          <td style="text-align: center"><span class="remove-item" ng-click="removeEntry(listName)" title="Remove"></span></td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 
 </section>

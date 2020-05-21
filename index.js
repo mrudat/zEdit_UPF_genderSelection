@@ -15,6 +15,23 @@ const {
   WithHandles
 } = xelib
 
+function sortObjectByKey (object) {
+  Object.keys(object).sort().forEach((key) => {
+    const temp = object[key]
+    delete object[key]
+    object[key] = temp
+  })
+}
+
+const GHOUL_RACE = 'GhoulRace "Ghoul" [RACE:000EAFB6]'
+
+function isGhoul (npc) {
+  return WithHandle(GetLinksTo(npc, 'RNAM'), (rnam) => LongName(rnam) === GHOUL_RACE)
+}
+
+const REMOVE_MALES = 1
+const REMOVE_FEMALES = 2
+
 registerPatcher({
   info: info,
   gameModes: [xelib.gmFO4],
@@ -23,79 +40,167 @@ registerPatcher({
     templateUrl: `${patcherUrl}/partials/settings.html`,
     controller: function ($scope) {
       const patcherSettings = $scope.settings.genderSelection
+      let counter = 0
 
-      $scope.femaleLists = patcherSettings.femaleLists.sort()
-      $scope.maleLists = patcherSettings.maleLists.sort()
+      const lists = $scope.lists = patcherSettings.lists
+      sortObjectByKey(lists)
 
       $scope.min = Math.min
 
-      $scope.removeFemale = (index) => {
-        $scope.femaleLists.splice(index, 1)
+      $scope.removeEntry = (listName) => {
+        delete lists[listName]
       }
 
-      $scope.addFemale = () => {
-        $scope.femaleLists.push('SomeListToHaveMalesRemoved')
-      }
-
-      $scope.removeMale = (index) => {
-        $scope.maleLists.splice(index, 1)
-      }
-
-      $scope.addMale = () => {
-        $scope.maleLists.push('SomeListToHaveFemalesRemoved')
+      $scope.addEntry = () => {
+        $scope.lists[`#AListToHaveNPCsRemoved${counter}`] = {}
+        sortObjectByKey($scope.lists)
+        counter++
       }
     },
     defaultSettings: {
       patchFileName: 'zPatch.esp',
-      femaleLists: [
-        'DLC03LCharWorkshopNPC',
-        'DLC06LCharWorkshopNPC',
-        'JtB_SSAO_SimTowers_Room1Guests',
-        'JtB_SSAO_SimTowers_Room2Guests',
-        'JtB_SSAO_SimTowers_Room3Guests',
-        'JtB_SSAO_SimTowers_Room4Guests',
-        'JtB_SSAO_SimTowers_Room5Guests',
-        'kgSIM_Civilians_Commonwealth',
-        'kgSIM_Civilians_FarHarbor',
-        'kgSIM_DefaultGenericVisitorForms',
-        'kgSIM_LChar_IndRev_IronMineWorkerNPC',
-        'kgSIM_LCharEnslavedSettler',
-        'LCharMinutemenFaces',
-        'LCharRRAgentFace',
-        'LCharWorkshopGuard',
-        'LCharWorkshopNPC_EvenToned',
-        'LCharWorkshopNPC_NoBoston',
-        'LCharWorkshopNPC',
-        'simvault_Minutefans'
-      ],
-      maleLists: [
-        'LCharScavenger',
-        'DLC03_LCharTrapperFace',
-        'DLC04_LCharRaiderDiscipleFace',
-        'DLC04_LCharRaiderOperatorFace',
-        'DLC04_LCharRaiderPackFace',
-        'DLC04LCharWorkshopRaiderA',
-        'DLC04LCharWorkshopRaiderASpokesperson',
-        'DLC04LCharWorkshopRaiderB',
-        'DLC04LCharWorkshopRaiderBSpokesperson',
-        'DLC04LCharWorkshopRaiderC',
-        'DLC04LCharWorkshopRaiderCSpokesperson',
-        'LCharBoSTraitsSoldier',
-        'LCharChildrenofAtomFaces',
-        'LCharGunnerFaceAndGender',
-        'LCharRaiderFaceAndGender',
-        'LCharRaiderGhoulFaceAndGender',
-        'LCharTriggermanFaceAndRace',
-        'LCharTriggermanGhoulFaces',
-        'LCharTriggermanHumanFaces',
-        'tkz_LCharBOSFaceAndGender'
-      ]
+      lists: {
+        DLC03LCharWorkshopNPC: {
+          removeGhouls: true,
+          genderAction: 1
+        },
+        DLC03_LCharTrapperFace: {
+          genderAction: 2
+        },
+        DLC04LCharWorkshopRaiderA: {
+          genderAction: 2
+        },
+        DLC04LCharWorkshopRaiderASpokesperson: {
+          genderAction: 2
+        },
+        DLC04LCharWorkshopRaiderB: {
+          genderAction: 2
+        },
+        DLC04LCharWorkshopRaiderBSpokesperson: {
+          genderAction: 2
+        },
+        DLC04LCharWorkshopRaiderC: {
+          genderAction: 2
+        },
+        DLC04LCharWorkshopRaiderCSpokesperson: {
+          genderAction: 2
+        },
+        DLC04_LCharRaiderDiscipleFace: {
+          genderAction: 2
+        },
+        DLC04_LCharRaiderOperatorFace: {
+          genderAction: 2
+        },
+        DLC04_LCharRaiderPackFace: {
+          genderAction: 2
+        },
+        DLC06LCharWorkshopNPC: {
+          removeGhouls: true,
+          genderAction: 1
+        },
+        JtB_SSAO_SimTowers_Room1Guests: {
+          genderAction: 1
+        },
+        JtB_SSAO_SimTowers_Room2Guests: {
+          genderAction: 1
+        },
+        JtB_SSAO_SimTowers_Room3Guests: {
+          genderAction: 1
+        },
+        JtB_SSAO_SimTowers_Room4Guests: {
+          genderAction: 1
+        },
+        JtB_SSAO_SimTowers_Room5Guests: {
+          genderAction: 1
+        },
+        LCharBoSTraitsSoldier: {
+          genderAction: 2
+        },
+        LCharChildrenofAtomFaces: {
+          genderAction: 2
+        },
+        LCharGunnerFaceAndGender: {
+          genderAction: 2
+        },
+        LCharMinutemenFaces: {
+          removeGhouls: true,
+          genderAction: 1
+        },
+        LCharRRAgentFace: {
+          removeGhouls: true,
+          genderAction: 1
+        },
+        LCharRaiderFaceAndGender: {
+          genderAction: 2
+        },
+        LCharRaiderGhoulFaceAndGender: {
+          genderAction: 2
+        },
+        LCharScavenger: {
+          genderAction: 2
+        },
+        LCharTriggermanFaceAndRace: {
+          genderAction: 2
+        },
+        LCharTriggermanGhoulFaces: {
+          genderAction: 2
+        },
+        LCharTriggermanHumanFaces: {
+          genderAction: 2
+        },
+        LCharWorkshopGuard: {
+          removeGhouls: true,
+          genderAction: 1
+        },
+        LCharWorkshopNPC: {
+          removeGhouls: true,
+          genderAction: 1
+        },
+        LCharWorkshopNPC_EvenToned: {
+          removeGhouls: true,
+          genderAction: 1
+        },
+        LCharWorkshopNPC_NoBoston: {
+          removeGhouls: true,
+          genderAction: 1
+        },
+        aListToHaveNPCsRemoved0: {},
+        kgSIM_Civilians_Commonwealth: {
+          removeGhouls: true,
+          genderAction: 1
+        },
+        kgSIM_Civilians_FarHarbor: {
+          removeGhouls: true,
+          genderAction: 1
+        },
+        kgSIM_DefaultGenericVisitorForms: {
+          removeGhouls: true,
+          genderAction: 1
+        },
+        kgSIM_LCharEnslavedSettler: {
+          removeGhouls: true,
+          genderAction: 1
+        },
+        kgSIM_LChar_IndRev_IronMineWorkerNPC: {
+          removeGhouls: true,
+          genderAction: 1
+        },
+        simvault_Minutefans: {
+          genderAction: 1
+        },
+        tkz_LCharBOSFaceAndGender: {
+          genderAction: 2
+        }
+      }
     }
   },
   execute: (patchFile, helpers, settings, locals) => ({
     initialize: function (patchFile, helpers, settings, locals) {
-      locals.femaleLists = new Set(settings.femaleLists)
-      locals.maleLists = new Set(settings.maleLists)
+      const lists = locals.lists = new Map()
+      const settingsLists = settings.lists
+      for (const listName in settingsLists) {
+        lists.set(listName, settingsLists[listName])
+      }
     },
     process: [
       {
@@ -104,15 +209,20 @@ registerPatcher({
           filter: function (lvln) {
             if (!HasElement(lvln, 'Leveled List Entries')) return false
             const edid = EditorID(lvln)
-            if (locals.femaleLists.has(edid)) return true
-            if (locals.maleLists.has(edid)) return true
+            if (locals.lists.has(edid)) return true
             return false
           }
         },
         patch: function (lvln, helpers, settings, locals) {
           const { logMessage } = helpers
-          const removeFemales = locals.maleLists.has(EditorID(lvln))
-          const victims = removeFemales ? 'females' : 'males'
+          const { genderAction, removeGhouls } = locals.lists.get(EditorID(lvln))
+          const removeFemales = genderAction == REMOVE_FEMALES
+          const removeMales = genderAction == REMOVE_MALES
+          let victims = []
+          if (removeFemales) victims.push('females')
+          if (removeMales) victims.push('males')
+          if (removeGhouls) victims.push('ghouls')
+          victims = victims.join(' and ')
           logMessage(`Removing ${victims} from ${LongName(lvln)}`)
           WithHandles(GetElements(lvln, 'Leveled List Entries'), (llentries) => {
             const toRemove = new Set()
@@ -123,9 +233,12 @@ registerPatcher({
                   WithHandle(GetWinningOverride(npc), (npc) => {
                     if (Signature(npc) !== 'NPC_') return
                     npcCount = npcCount + 1
-                    if (GetIsFemale(npc) === removeFemales) {
-                      toRemove.add(llentry)
+                    if (removeFemales || removeMales) {
+                      const isFemale = GetIsFemale(npc)
+                      if (isFemale && removeFemales) return toRemove.add(llentry)
+                      if (!isFemale && removeMales) return toRemove.add(llentry)
                     }
+                    if (removeGhouls && isGhoul(npc)) return toRemove.add(llentry)
                   })
                 })
               })
@@ -137,8 +250,8 @@ registerPatcher({
             }
 
             if (toRemove.size === npcCount) {
-              // Probably not safe to add an NPC of the opposite gender to a single-gender LVLN, so we can't really do anything.
               logMessage(`[WARN] Would have removed all entries from ${LongName(lvln)}, not doing anything.`)
+              WithHandles(toRemove.values())
               return
             }
 
@@ -154,15 +267,20 @@ registerPatcher({
           filter: function (flst) {
             if (!HasElement(flst, 'FormIDs')) return false
             const edid = EditorID(flst)
-            if (locals.femaleLists.has(edid)) return true
-            if (locals.maleLists.has(edid)) return true
+            if (locals.lists.has(edid)) return true
             return false
           }
         },
         patch: function (flst, helpers, settings, locals) {
           const { logMessage } = helpers
-          const removeFemales = locals.maleLists.has(EditorID(flst))
-          const victims = removeFemales ? 'females' : 'males'
+          const { genderAction, removeGhouls } = locals.lists.get(EditorID(flst))
+          const removeFemales = genderAction == REMOVE_FEMALES
+          const removeMales = genderAction == REMOVE_MALES
+          let victims = []
+          if (removeFemales) victims.push('females')
+          if (removeMales) victims.push('males')
+          if (removeGhouls) victims.push('ghouls')
+          victims = victims.join(' and ')
           logMessage(`Removing ${victims} from ${LongName(flst)}`)
           WithHandles(GetElements(flst, 'FormIDs'), (entries) => {
             const toRemove = new Set()
@@ -172,9 +290,12 @@ registerPatcher({
                 WithHandle(GetWinningOverride(npc), (npc) => {
                   if (Signature(npc) !== 'NPC_') return
                   npcCount = npcCount + 1
-                  if (GetIsFemale(npc) === removeFemales) {
-                    toRemove.add(entry)
+                  if (removeFemales || removeMales) {
+                    const isFemale = GetIsFemale(npc)
+                    if (isFemale && removeFemales) return toRemove.add(entry)
+                    if (!isFemale && removeMales) return toRemove.add(entry)
                   }
+                  if (removeGhouls && isGhoul(npc)) return toRemove.add(entry)
                 })
               })
             }
@@ -185,8 +306,8 @@ registerPatcher({
             }
 
             if (toRemove.size === npcCount) {
-              // Probably not safe to add an NPC of the opposite gender to a single-gender LVLN, so we can't really do anything.
               logMessage(`[WARN] Would have removed all entries from ${LongName(flst)}, not doing anything.`)
+              WithHandles(toRemove.values())
               return
             }
 
